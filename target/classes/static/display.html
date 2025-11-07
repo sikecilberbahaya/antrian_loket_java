@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tampilan Antrian</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="display-page">
+<header class="display-header">
+    <h1>Status Panggilan Loket</h1>
+    <p>Pantau nomor antrean yang sedang berjalan.</p>
+</header>
+<main class="display-main">
+    <section class="highlight">
+        <h2>Sedang Dipanggil</h2>
+        <div id="last-call-number" class="highlight-number">-</div>
+        <div id="last-call-counter" class="highlight-counter">-</div>
+    </section>
+    <section class="display-grid">
+        <div>
+            <h2>Nomor Berikutnya</h2>
+            <p id="display-next-number" class="display-next">-</p>
+        </div>
+        <div>
+            <h2>Antrean Menunggu</h2>
+            <ul id="display-queue" class="display-queue"></ul>
+        </div>
+    </section>
+    <section>
+        <h2>Loket</h2>
+        <div id="display-counters" class="display-counters"></div>
+    </section>
+</main>
+<footer>
+    <small>&copy; 2025 Sistem Panggilan Loket</small>
+</footer>
+<script src="display.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambil Nomor Antrean</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="public-page">
+<header class="public-header">
+    <h1>Ambil Nomor Antrean</h1>
+    <p>Dapatkan nomor antrean terbaru. Datang ke loket ketika nomor Anda dipanggil.</p>
+</header>
+<main class="public-main">
+    <section class="ticket-card">
+        <div class="ticket-display">
+            <span>Nomor Anda</span>
+            <strong id="issued-number">-</strong>
+        </div>
+        <button id="take-ticket">Ambil Nomor</button>
+        <p id="ticket-feedback" class="hidden"></p>
+    </section>
+    <section class="ticket-info">
+        <div>
+            <h2>Nomor Berikutnya</h2>
+            <p id="public-next-number">-</p>
+        </div>
+        <div>
+            <h2>Jumlah Menunggu</h2>
+            <p id="public-queue-length">0</p>
+        </div>
+    </section>
+</main>
+<footer>
+    <small>&copy; 2025 Sistem Panggilan Loket</small>
+</footer>
+<script src="ticket.js" type="module"></script>
+</body>
+</html>

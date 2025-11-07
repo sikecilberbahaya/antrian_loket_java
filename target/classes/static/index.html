@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panggilan Loket</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <h1>Sistem Panggilan Loket</h1>
+    <p>Kelola antrean loket dan lakukan panggilan otomatis dengan suara.</p>
+</header>
+<main>
+    <section class="controls">
+        <div class="control-card">
+            <h2>Tambah Loket</h2>
+            <form id="counter-form">
+                <label for="counter-id">ID Loket</label>
+                <input id="counter-id" name="counterId" maxlength="3" required>
+                <label for="counter-name">Nama Loket</label>
+                <input id="counter-name" name="counterName" required>
+                <button type="submit">Simpan Loket</button>
+            </form>
+        </div>
+        <div class="control-card">
+            <h2>Operasional Antrean</h2>
+            <p class="secondary-text">Nomor berikutnya: <span id="next-number">-</span></p>
+            <p class="secondary-text">Menunggu di loket pertama: <span id="queue-length">0</span></p>
+            <p id="feedback" class="hidden"></p>
+            <div class="quick-links">
+                <a href="ticket.html" target="_blank">Halaman Pengambilan Nomor</a>
+                <a href="display.html" target="_blank">Tampilan Antrian</a>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Status Loket</h2>
+        <div id="counter-list" class="counter-grid"></div>
+    </section>
+
+    <section>
+        <h2>Antrean Menunggu</h2>
+        <div class="waiting-list queue-overview">
+            <strong>Daftar Nomor</strong>
+            <ul id="queue-items"></ul>
+        </div>
+    </section>
+</main>
+<footer>
+    <small>&copy; 2025 Sistem Panggilan Loket</small>
+</footer>
+
+<script src="app.js" type="module"></script>
+</body>
+</html>

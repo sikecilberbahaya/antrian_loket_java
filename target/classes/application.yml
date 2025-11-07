@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: panggilan-loket
+
+queue:
+  counters:
+    - id: A
+      name: Loket A
+    - id: B
+      name: Loket B
+    - id: C
+      name: Loket C
