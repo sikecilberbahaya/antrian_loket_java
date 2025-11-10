@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -65,7 +66,9 @@ public final class CounterCallerApp {
         JButton recallButton = new JButton("Panggil Ulang");
         JButton completeButton = new JButton("Selesaikan");
 
-        currentTicketLabel = new JLabel("Nomor Saat Ini: -");
+    currentTicketLabel = new JLabel("Nomor Saat Ini: -");
+    currentTicketLabel.setHorizontalAlignment(JLabel.CENTER);
+    currentTicketLabel.setFont(currentTicketLabel.getFont().deriveFont(Font.BOLD, 24f));
         statusMessage = new JLabel(" ");
 
         gbc.gridx = 0;
