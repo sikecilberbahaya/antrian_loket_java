@@ -107,9 +107,9 @@ public class QueueService {
     public synchronized Optional<Ticket> callNext(String counterId) {
         ensureDailyResetIfNeeded();
         CounterState counter = requireCounter(counterId);
-        if (counter.activeSize() >= 2) {
-            throw new IllegalStateException("Loket " + counterId
-                    + " sudah memanggil dua nomor. Selesaikan salah satu terlebih dahulu.");
+    if (counter.activeSize() >= 3) {
+        throw new IllegalStateException("Loket " + counterId
+            + " sudah memanggil tiga nomor. Selesaikan salah satunya terlebih dahulu.");
         }
         Deque<Ticket> queue = waitingByCounter.get(counterId);
         if (queue == null) {

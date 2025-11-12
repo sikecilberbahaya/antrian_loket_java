@@ -14,7 +14,7 @@ Aplikasi antrean loket berbasis Java Spring Boot dengan antarmuka web dan dukung
 - REST API sederhana untuk integrasi lanjutan.
 - Menu pengaturan instansi untuk memperbarui nama dan alamat tanpa mengubah berkas konfigurasi.
 - Tombol aktivasi suara pada display agar browser mengizinkan pemutaran audio pemanggilan.
-- Setiap loket dapat menampung dua nomor aktif sekaligus; panggilan ketiga memerlukan penyelesaian salah satu nomor sebelumnya.
+- Setiap loket dapat menampung tiga nomor aktif sekaligus; panggilan keempat memerlukan penyelesaian salah satu nomor sebelumnya.
 - Operator dapat memilih nomor aktif mana yang akan dipanggil ulang atau diselesaikan baik dari dashboard web maupun aplikasi desktop.
 
 ## Teknologi

@@ -65,7 +65,9 @@ class QueueServiceTests {
         queueService.issueTicket();
         queueService.issueTicket();
         queueService.issueTicket();
+        queueService.issueTicket();
 
+        queueService.callNext("A").orElseThrow();
         queueService.callNext("A").orElseThrow();
         queueService.callNext("A").orElseThrow();
 
