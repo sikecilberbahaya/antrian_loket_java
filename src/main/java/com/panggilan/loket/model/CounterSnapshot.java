@@ -13,9 +13,10 @@ public final class CounterSnapshot {
         private final List<Ticket> waitingTickets;
         private final int nextNumber;
         private final LocalDateTime lastCalledAt;
+        private final Ticket lastCalledTicket;
 
         public CounterSnapshot(String id, String name, List<Ticket> activeTickets, List<Ticket> waitingTickets,
-                                                   int nextNumber, LocalDateTime lastCalledAt) {
+                                                   int nextNumber, LocalDateTime lastCalledAt, Ticket lastCalledTicket) {
                 this.id = id;
                 this.name = name;
                 List<Ticket> actives = activeTickets == null ? Collections.emptyList() : List.copyOf(activeTickets);
@@ -24,6 +25,7 @@ public final class CounterSnapshot {
                 this.waitingTickets = waitingTickets == null ? Collections.emptyList() : Collections.unmodifiableList(waitingTickets);
                 this.nextNumber = nextNumber;
                 this.lastCalledAt = lastCalledAt;
+                this.lastCalledTicket = lastCalledTicket;
         }
 
         public String getId() {
@@ -52,5 +54,9 @@ public final class CounterSnapshot {
 
         public LocalDateTime getLastCalledAt() {
                 return lastCalledAt;
+        }
+
+        public Ticket getLastCalledTicket() {
+                return lastCalledTicket;
         }
 }

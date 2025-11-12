@@ -121,7 +121,7 @@ public class QueueService {
         }
         Ticket assigned = ticket.assignToCounter(counter.id, counter.name);
         counter.addActive(assigned);
-        counter.lastCalledAt = LocalDateTime.now();
+        counter.markLastCalled(assigned);
         return Optional.of(assigned);
     }
 
@@ -146,7 +146,7 @@ public class QueueService {
             throw new IllegalArgumentException("Nomor " + ticketId + " tidak aktif di loket " + counterId);
         }
         if (target != null) {
-            counter.lastCalledAt = LocalDateTime.now();
+            counter.markLastCalled(target);
         }
         return Optional.ofNullable(target);
     }
@@ -165,6 +165,7 @@ public class QueueService {
         if (current == null) {
             return;
         }
+        counter.clearLastCalledIfMatches(current);
         String nextCounterId = nextCounterId(counterId);
         if (nextCounterId != null) {
             waitingByCounter.get(nextCounterId).addLast(current.resetCounter());
@@ -207,7 +208,6 @@ public class QueueService {
             waitingByCounter.values().forEach(Deque::clear);
             counters.values().forEach(state -> {
                 state.clearActive();
-                state.lastCalledAt = null;
             });
             lastResetDate = today;
         }
@@ -253,9 +253,10 @@ public class QueueService {
     }
 
     private static final class CounterState {
-        private final String id;
-        private volatile String name;
-        private volatile LocalDateTime lastCalledAt;
+    private final String id;
+    private volatile String name;
+    private volatile LocalDateTime lastCalledAt;
+    private volatile Ticket lastCalledTicket;
 
         private CounterState(String id, String name) {
             this.id = id;
@@ -264,7 +265,7 @@ public class QueueService {
 
         private CounterSnapshot snapshot(List<Ticket> waitingQueue, int nextNumber) {
             List<Ticket> actives = new ArrayList<>(activeTickets);
-            return new CounterSnapshot(id, name, actives, waitingQueue, nextNumber, lastCalledAt);
+            return new CounterSnapshot(id, name, actives, waitingQueue, nextNumber, lastCalledAt, lastCalledTicket);
         }
 
         private final Deque<Ticket> activeTickets = new ArrayDeque<>();
@@ -278,6 +279,8 @@ public class QueueService {
 
         private void clearActive() {
             activeTickets.clear();
+            lastCalledTicket = null;
+            lastCalledAt = null;
         }
 
         private Ticket realignActiveTicket(String ticketId) {
@@ -301,6 +304,24 @@ public class QueueService {
                 activeTickets.addLast(found);
             }
             return found;
+        }
+
+        private void markLastCalled(Ticket ticket) {
+            if (ticket == null) {
+                return;
+            }
+            lastCalledTicket = ticket;
+            lastCalledAt = LocalDateTime.now();
+        }
+
+        private void clearLastCalledIfMatches(Ticket ticket) {
+            if (ticket == null) {
+                return;
+            }
+            if (lastCalledTicket != null && lastCalledTicket.equals(ticket)) {
+                lastCalledTicket = null;
+                lastCalledAt = null;
+            }
         }
 
         private Ticket removeActive(String ticketId) {

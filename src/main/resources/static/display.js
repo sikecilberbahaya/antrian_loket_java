@@ -81,16 +81,15 @@ function updateNextNumber(sequence) {
 function updateLastCall(counters) {
     let latest = null;
     counters.forEach(counter => {
-        if (!counter.currentTicket || !counter.lastCalledAt) {
+        if (!counter.lastCalledTicket || !counter.lastCalledAt) {
             return;
         }
+        const ticket = counter.lastCalledTicket;
         const calledAt = new Date(counter.lastCalledAt);
         if (!latest || calledAt > latest.calledAt) {
-            const activeTickets = Array.isArray(counter.activeTickets) ? counter.activeTickets : [];
-            const lastTicket = activeTickets.length === 0 ? counter.currentTicket : activeTickets[activeTickets.length - 1];
             latest = {
-                key: `${lastTicket.id}:${counter.id}:${counter.lastCalledAt}`,
-                number: lastTicket.number,
+                key: `${ticket.id}:${counter.id}:${counter.lastCalledAt}`,
+                number: ticket.number,
                 counterName: counter.name,
                 calledAt
             };
