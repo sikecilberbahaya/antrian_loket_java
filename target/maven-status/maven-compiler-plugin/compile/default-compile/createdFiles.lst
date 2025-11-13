@@ -1,9 +1,11 @@
 com\panggilan\loket\dto\CreateCounterRequest.class
 com\panggilan\loket\config\TicketPrintProperties.class
 com\panggilan\loket\config\CounterProperties.class
+com\panggilan\loket\service\TicketAuditService$1.class
 com\panggilan\loket\dto\TicketPrintSettingsResponse.class
 com\panggilan\loket\model\QueueStatus.class
 com\panggilan\loket\service\TicketPrinter.class
+com\panggilan\loket\repository\TicketEventRepository.class
 com\panggilan\loket\service\QueueService.class
 com\panggilan\loket\controller\CounterController.class
 com\panggilan\loket\controller\SettingsController.class
@@ -14,6 +16,10 @@ com\panggilan\loket\PanggilanLoketApplication.class
 com\panggilan\loket\controller\GlobalExceptionHandler.class
 com\panggilan\loket\service\DefaultTicketPrinter$TicketPrintable.class
 com\panggilan\loket\service\DefaultTicketPrinter.class
+com\panggilan\loket\service\TicketAuditService.class
+com\panggilan\loket\entity\TicketEventEntity.class
 com\panggilan\loket\model\CounterSnapshot.class
+com\panggilan\loket\service\JpaTicketAuditService.class
+com\panggilan\loket\model\TicketEventType.class
 com\panggilan\loket\dto\UpdateTicketPrintSettingsRequest.class
 com\panggilan\loket\model\Ticket.class

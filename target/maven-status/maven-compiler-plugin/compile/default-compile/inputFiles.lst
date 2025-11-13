@@ -1,9 +1,13 @@
+C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\service\TicketAuditService.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\dto\TicketPrintSettingsResponse.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\service\TicketSettingsService.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\config\TicketPrintProperties.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\model\QueueStatus.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\dto\CreateCounterRequest.java
+C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\entity\TicketEventEntity.java
+C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\model\TicketEventType.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\service\QueueService.java
+C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\repository\TicketEventRepository.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\service\TicketPrinter.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\controller\CounterController.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\model\Ticket.java
@@ -14,3 +18,4 @@ C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\model\CounterSnapsho
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\PanggilanLoketApplication.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\controller\GlobalExceptionHandler.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\dto\UpdateTicketPrintSettingsRequest.java
+C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\service\JpaTicketAuditService.java

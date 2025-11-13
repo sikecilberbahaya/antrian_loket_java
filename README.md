@@ -17,6 +17,7 @@ Aplikasi antrean loket berbasis Java Spring Boot dengan antarmuka web dan dukung
 - Setiap loket dapat menampung tiga nomor aktif sekaligus; panggilan keempat memerlukan penyelesaian salah satu nomor sebelumnya.
 - Operator dapat memilih nomor aktif mana yang akan dipanggil ulang atau diselesaikan baik dari dashboard web maupun aplikasi desktop.
 - Tiket dapat dihentikan (stop) dari loket sehingga tidak diteruskan ke loket berikutnya.
+- Riwayat antrean tersimpan di basis data MySQL (pengambilan nomor, pemanggilan loket, dan penyelesaian/stop).
 
 ## Teknologi
 
@@ -58,6 +59,18 @@ Setiap loket dapat menggunakan aplikasi desktop ringan untuk melakukan panggilan
 4. Pengguna Windows dapat menjalankan `run-desktop-client.bat` untuk meluncurkan aplikasi dengan wizard input URL dan ID loket.
 
 ### Konfigurasi Cetak Tiket
+### Konfigurasi Basis Data
+
+Secara bawaan aplikasi terhubung ke MySQL menggunakan variabel lingkungan berikut:
+
+```cmd
+set DB_URL=jdbc:mysql://localhost:3306/panggilan_loket?useSSL=false&serverTimezone=Asia/Jakarta
+set DB_USERNAME=root
+set DB_PASSWORD=your_password
+```
+
+Atau ubah langsung di `src/main/resources/application.yml`. Hibernate dikonfigurasi dengan `ddl-auto=update`; sesuaikan strategi ini untuk lingkungan produksi.
+
 
 Atur nama instansi dan alamat yang tercetak melalui `src/main/resources/application.yml`:
 

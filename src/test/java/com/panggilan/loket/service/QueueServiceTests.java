@@ -2,6 +2,7 @@ package com.panggilan.loket.service;
 
 import com.panggilan.loket.config.CounterProperties;
 import com.panggilan.loket.model.Ticket;
+import com.panggilan.loket.service.TicketAuditService;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.List;
@@ -28,7 +29,7 @@ class QueueServiceTests {
         definitionC.setId("C");
         definitionC.setName("Loket C");
         properties.setCounters(List.of(definitionA, definitionB, definitionC));
-        queueService = new QueueService(properties, TicketPrinter.noop());
+    queueService = new QueueService(properties, TicketPrinter.noop(), TicketAuditService.noop());
         queueService.initializeCounters();
     }
 

@@ -35,6 +35,7 @@ public class QueueService {
     private final CounterProperties counterProperties;
     private final Clock clock;
     private final TicketPrinter ticketPrinter;
+    private final TicketAuditService auditService;
     private final Map<String, CounterState> counters = new ConcurrentHashMap<>();
     private final Map<String, Deque<Ticket>> waitingByCounter = new ConcurrentHashMap<>();
     private final AtomicInteger ticketSequence = new AtomicInteger();
@@ -42,13 +43,14 @@ public class QueueService {
     private volatile LocalDate lastResetDate;
 
     @Autowired
-    public QueueService(CounterProperties counterProperties, TicketPrinter ticketPrinter) {
-        this(counterProperties, ticketPrinter, Clock.systemDefaultZone());
+    public QueueService(CounterProperties counterProperties, TicketPrinter ticketPrinter, TicketAuditService auditService) {
+        this(counterProperties, ticketPrinter, auditService, Clock.systemDefaultZone());
     }
 
-    QueueService(CounterProperties counterProperties, TicketPrinter ticketPrinter, Clock clock) {
+    QueueService(CounterProperties counterProperties, TicketPrinter ticketPrinter, TicketAuditService auditService, Clock clock) {
         this.counterProperties = counterProperties;
         this.ticketPrinter = ticketPrinter == null ? TicketPrinter.noop() : ticketPrinter;
+        this.auditService = auditService == null ? TicketAuditService.noop() : auditService;
         this.clock = clock;
         this.lastResetDate = LocalDate.now(clock);
     }
@@ -96,6 +98,7 @@ public class QueueService {
         String ticketNumber = String.format("Q-%03d", nextSequence);
         Ticket ticket = Ticket.create(ticketNumber);
         waitingByCounter.get(firstCounterId).addLast(ticket);
+        auditService.recordIssued(ticket);
         try {
             ticketPrinter.printTicket(ticket);
         } catch (Exception ex) {
@@ -122,6 +125,7 @@ public class QueueService {
         Ticket assigned = ticket.assignToCounter(counter.id, counter.name);
         counter.addActive(assigned);
         counter.markLastCalled(assigned);
+        auditService.recordCalled(assigned);
         return Optional.of(assigned);
     }
 
@@ -147,6 +151,7 @@ public class QueueService {
         }
         if (target != null) {
             counter.markLastCalled(target);
+            auditService.recordCalled(target);
         }
         return Optional.ofNullable(target);
     }
@@ -166,6 +171,7 @@ public class QueueService {
             return;
         }
         counter.clearLastCalledIfMatches(current);
+        auditService.recordCompleted(current, counterId);
         String nextCounterId = nextCounterId(counterId);
         if (nextCounterId != null) {
             waitingByCounter.get(nextCounterId).addLast(current.resetCounter());
@@ -187,6 +193,7 @@ public class QueueService {
             return Optional.empty();
         }
         counter.clearLastCalledIfMatches(removed);
+        auditService.recordStopped(removed, counterId);
         return Optional.of(removed);
     }
 
