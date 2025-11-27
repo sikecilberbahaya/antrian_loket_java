@@ -16,14 +16,22 @@
         <div class="ticket-display">
             <span>Nomor Anda</span>
             <strong id="issued-number">-</strong>
+            <span id="patient-type-label" class="patient-type-label hidden"></span>
         </div>
-        <button id="take-ticket">Ambil Nomor</button>
+        <div class="ticket-buttons">
+            <button id="take-ticket-lama" class="btn-lama">Pasien Lama</button>
+            <button id="take-ticket-baru" class="btn-baru">Pasien Baru</button>
+        </div>
         <p id="ticket-feedback" class="hidden"></p>
     </section>
     <section class="ticket-info">
         <div>
-            <h2>Nomor Berikutnya</h2>
-            <p id="public-next-number">-</p>
+            <h2>Nomor Berikutnya (Lama)</h2>
+            <p id="public-next-number-lama">-</p>
+        </div>
+        <div>
+            <h2>Nomor Berikutnya (Baru)</h2>
+            <p id="public-next-number-baru">-</p>
         </div>
         <div>
             <h2>Jumlah Menunggu</h2>

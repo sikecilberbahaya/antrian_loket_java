@@ -2,6 +2,7 @@ package com.panggilan.loket.controller;
 
 import com.panggilan.loket.dto.CreateCounterRequest;
 import com.panggilan.loket.model.CounterSnapshot;
+import com.panggilan.loket.model.PatientType;
 import com.panggilan.loket.model.QueueStatus;
 import com.panggilan.loket.model.Ticket;
 import com.panggilan.loket.service.QueueService;
@@ -41,8 +42,10 @@ public class CounterController {
     }
 
     @PostMapping("/tickets")
-    public ResponseEntity<Ticket> issueTicket() {
-        Ticket ticket = queueService.issueTicket();
+    public ResponseEntity<Ticket> issueTicket(
+            @RequestParam(value = "patientType", required = false) String patientTypeParam) {
+        PatientType patientType = PatientType.fromString(patientTypeParam);
+        Ticket ticket = queueService.issueTicket(patientType);
         return ResponseEntity.status(HttpStatus.CREATED).body(ticket);
     }
 
@@ -117,5 +120,11 @@ public class CounterController {
     @GetMapping("/queue/status")
     public QueueStatus queueStatus() {
         return queueService.getQueueStatus();
+    }
+
+    @PostMapping("/queue/reset")
+    public ResponseEntity<Void> resetQueue() {
+        queueService.manualReset();
+        return ResponseEntity.accepted().build();
     }
 }

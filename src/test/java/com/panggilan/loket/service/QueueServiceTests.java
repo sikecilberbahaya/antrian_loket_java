@@ -1,6 +1,7 @@
 package com.panggilan.loket.service;
 
 import com.panggilan.loket.config.CounterProperties;
+import com.panggilan.loket.model.PatientType;
 import com.panggilan.loket.model.Ticket;
 import com.panggilan.loket.service.TicketAuditService;
 import java.lang.reflect.Field;
@@ -36,13 +37,15 @@ class QueueServiceTests {
     @Test
     void issueTicketShouldAddToFirstCounterQueue() {
         Ticket ticket = queueService.issueTicket();
-        assertThat(ticket.getNumber()).isEqualTo("Q-001");
+        assertThat(ticket.getNumber()).isEqualTo("L-001");
+        assertThat(ticket.getPatientType()).isEqualTo(PatientType.LAMA);
         assertThat(queueService.getWaitingQueue()).hasSize(1);
     }
 
     @Test
     void ticketProgressesThroughCountersSequentially() {
-        queueService.issueTicket();
+        // Gunakan Pasien Baru agar bisa dipanggil di Loket A
+        queueService.issueTicket(PatientType.BARU);
 
         Ticket atA = queueService.callNext("A").orElseThrow();
         assertThat(atA.getCounterId()).isEqualTo("A");
@@ -63,10 +66,11 @@ class QueueServiceTests {
 
     @Test
     void callNextWhileBusyShouldThrow() {
-        queueService.issueTicket();
-        queueService.issueTicket();
-        queueService.issueTicket();
-        queueService.issueTicket();
+        // Gunakan Pasien Baru agar bisa dipanggil di Loket A
+        queueService.issueTicket(PatientType.BARU);
+        queueService.issueTicket(PatientType.BARU);
+        queueService.issueTicket(PatientType.BARU);
+        queueService.issueTicket(PatientType.BARU);
 
         queueService.callNext("A").orElseThrow();
         queueService.callNext("A").orElseThrow();
@@ -78,8 +82,9 @@ class QueueServiceTests {
 
     @Test
     void recallShouldReturnCurrentTicket() {
-        queueService.issueTicket();
-        queueService.issueTicket();
+        // Gunakan Pasien Baru agar bisa dipanggil di Loket A
+        queueService.issueTicket(PatientType.BARU);
+        queueService.issueTicket(PatientType.BARU);
 
         queueService.callNext("A").orElseThrow();
         Ticket second = queueService.callNext("A").orElseThrow();
@@ -91,9 +96,10 @@ class QueueServiceTests {
 
     @Test
     void completeRemovesOldestActiveTicketFirst() {
-        queueService.issueTicket();
-        queueService.issueTicket();
-        queueService.issueTicket();
+        // Gunakan Pasien Baru agar bisa dipanggil di Loket A
+        queueService.issueTicket(PatientType.BARU);
+        queueService.issueTicket(PatientType.BARU);
+        queueService.issueTicket(PatientType.BARU);
 
         Ticket first = queueService.callNext("A").orElseThrow();
         Ticket second = queueService.callNext("A").orElseThrow();
@@ -111,8 +117,9 @@ class QueueServiceTests {
 
     @Test
     void stopShouldRemoveTicketWithoutForwarding() {
-        queueService.issueTicket();
-        queueService.issueTicket();
+        // Gunakan Pasien Baru agar bisa dipanggil di Loket A
+        queueService.issueTicket(PatientType.BARU);
+        queueService.issueTicket(PatientType.BARU);
 
         Ticket first = queueService.callNext("A").orElseThrow();
         Ticket second = queueService.callNext("A").orElseThrow();
@@ -130,7 +137,7 @@ class QueueServiceTests {
     void ticketSequenceResetsAtMidnight() throws Exception {
         queueService.issueTicket();
         queueService.issueTicket();
-        assertThat(queueService.previewNextTicketNumber()).isEqualTo(3);
+        assertThat(queueService.previewNextTicketNumber(PatientType.LAMA)).isEqualTo(3);
 
         Field lastResetField = QueueService.class.getDeclaredField("lastResetDate");
         lastResetField.setAccessible(true);
@@ -138,8 +145,76 @@ class QueueServiceTests {
 
         Ticket ticketAfterReset = queueService.issueTicket();
 
-        assertThat(ticketAfterReset.getNumber()).isEqualTo("Q-001");
+        assertThat(ticketAfterReset.getNumber()).isEqualTo("L-001");
         assertThat(queueService.getWaitingQueue()).hasSize(1);
-        assertThat(queueService.previewNextTicketNumber()).isEqualTo(2);
+        assertThat(queueService.previewNextTicketNumber(PatientType.LAMA)).isEqualTo(2);
+    }
+
+    @Test
+    void manualResetClearsAllQueuesAndActiveTickets() {
+        queueService.issueTicket();
+        queueService.issueTicket();
+
+        queueService.callNext("A");
+
+        queueService.manualReset();
+
+        assertThat(queueService.getWaitingQueue()).isEmpty();
+        queueService.getSnapshot().forEach(snapshot -> {
+            assertThat(snapshot.getActiveTickets()).isEmpty();
+            assertThat(snapshot.getWaitingTickets()).isEmpty();
+        });
+        assertThat(queueService.previewNextTicketNumber(PatientType.LAMA)).isEqualTo(1);
+    }
+
+    @Test
+    void issueTicketBaruShouldUseSharedSequence() {
+        Ticket lamaTicket = queueService.issueTicket(PatientType.LAMA);
+        Ticket baruTicket = queueService.issueTicket(PatientType.BARU);
+        Ticket lamaTicket2 = queueService.issueTicket(PatientType.LAMA);
+
+        assertThat(lamaTicket.getNumber()).isEqualTo("L-001");
+        assertThat(lamaTicket.getPatientType()).isEqualTo(PatientType.LAMA);
+
+        // Shared sequence: B-002 (bukan B-001)
+        assertThat(baruTicket.getNumber()).isEqualTo("B-002");
+        assertThat(baruTicket.getPatientType()).isEqualTo(PatientType.BARU);
+
+        assertThat(lamaTicket2.getNumber()).isEqualTo("L-003");
+        assertThat(lamaTicket2.getPatientType()).isEqualTo(PatientType.LAMA);
+
+        assertThat(queueService.getWaitingQueue()).hasSize(3);
+    }
+
+    @Test
+    void loketACanOnlyCallPasienBaru() {
+        // Issue Pasien Lama dan Pasien Baru
+        Ticket lama1 = queueService.issueTicket(PatientType.LAMA);
+        Ticket baru1 = queueService.issueTicket(PatientType.BARU);
+        Ticket lama2 = queueService.issueTicket(PatientType.LAMA);
+
+        // Loket A hanya bisa memanggil Pasien Baru
+        Ticket calledAtA = queueService.callNext("A").orElseThrow();
+        assertThat(calledAtA.getId()).isEqualTo(baru1.getId());
+        assertThat(calledAtA.getPatientType()).isEqualTo(PatientType.BARU);
+
+        // Pasien Lama masih di antrian
+        assertThat(queueService.getWaitingQueue()).hasSize(2);
+        assertThat(queueService.getWaitingQueue().get(0).getId()).isEqualTo(lama1.getId());
+        assertThat(queueService.getWaitingQueue().get(1).getId()).isEqualTo(lama2.getId());
+    }
+
+    @Test
+    void loketBCanCallAnyPatientType() {
+        // Issue Pasien Lama - akan masuk ke queue Loket A (first counter)
+        Ticket lama1 = queueService.issueTicket(PatientType.LAMA);
+
+        // Loket A tidak bisa memanggil Pasien Lama
+        assertThat(queueService.callNext("A")).isEmpty();
+
+        // Loket B bisa mengambil Pasien Lama dari queue Loket A
+        Ticket calledAtB = queueService.callNext("B").orElseThrow();
+        assertThat(calledAtB.getId()).isEqualTo(lama1.getId());
+        assertThat(calledAtB.getPatientType()).isEqualTo(PatientType.LAMA);
     }
 }

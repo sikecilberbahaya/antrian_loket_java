@@ -4,6 +4,7 @@ const nextNumberElement = document.getElementById("next-number");
 const queueLengthElement = document.getElementById("queue-length");
 const feedbackElement = document.getElementById("feedback");
 const counterForm = document.getElementById("counter-form");
+const resetButton = document.getElementById("reset-queue");
 
 let refreshTimer;
 
@@ -205,6 +206,32 @@ counterForm.addEventListener("submit", async event => {
         showFeedback(error.message, true);
     }
 });
+
+if (resetButton) {
+    resetButton.addEventListener("click", async () => {
+        if (!confirm("Reset manual akan mengosongkan antrean hari ini. Lanjutkan?")) {
+            return;
+        }
+        try {
+            const response = await fetch("/api/queue/reset", { method: "POST" });
+            if (!response.ok) {
+                let message = "Gagal mereset antrean";
+                try {
+                    const error = await response.json();
+                    message = error.error || message;
+                } catch (ignore) {
+                    // gunakan pesan default
+                }
+                throw new Error(message);
+            }
+            showFeedback("Antrean berhasil direset untuk hari ini.");
+            await loadStatus();
+        } catch (error) {
+            console.error(error);
+            showFeedback(error.message, true);
+        }
+    });
+}
 
 function showFeedback(message, isError = false) {
     if (!feedbackElement) {

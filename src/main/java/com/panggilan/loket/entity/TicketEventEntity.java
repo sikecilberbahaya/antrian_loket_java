@@ -1,5 +1,6 @@
 package com.panggilan.loket.entity;
 
+import com.panggilan.loket.model.PatientType;
 import com.panggilan.loket.model.TicketEventType;
 
 import javax.persistence.Column;
@@ -39,6 +40,10 @@ public class TicketEventEntity {
     @Column(name = "event_time", nullable = false)
     private LocalDateTime eventTime;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "patient_type", length = 16)
+    private PatientType patientType;
+
     protected TicketEventEntity() {
     }
 
@@ -47,13 +52,15 @@ public class TicketEventEntity {
                               TicketEventType eventType,
                               String counterId,
                               String counterName,
-                              LocalDateTime eventTime) {
+                              LocalDateTime eventTime,
+                              PatientType patientType) {
         this.ticketId = ticketId;
         this.ticketNumber = ticketNumber;
         this.eventType = eventType;
         this.counterId = counterId;
         this.counterName = counterName;
         this.eventTime = eventTime;
+        this.patientType = patientType;
     }
 
     public static TicketEventEntity of(String ticketId,
@@ -62,7 +69,17 @@ public class TicketEventEntity {
                                        String counterId,
                                        String counterName,
                                        LocalDateTime eventTime) {
-        return new TicketEventEntity(ticketId, ticketNumber, eventType, counterId, counterName, eventTime);
+        return of(ticketId, ticketNumber, eventType, counterId, counterName, eventTime, null);
+    }
+
+    public static TicketEventEntity of(String ticketId,
+                                       String ticketNumber,
+                                       TicketEventType eventType,
+                                       String counterId,
+                                       String counterName,
+                                       LocalDateTime eventTime,
+                                       PatientType patientType) {
+        return new TicketEventEntity(ticketId, ticketNumber, eventType, counterId, counterName, eventTime, patientType);
     }
 
     public Long getId() {
@@ -91,5 +108,9 @@ public class TicketEventEntity {
 
     public LocalDateTime getEventTime() {
         return eventTime;
+    }
+
+    public PatientType getPatientType() {
+        return patientType;
     }
 }

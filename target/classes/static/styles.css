@@ -269,8 +269,48 @@ footer {
 .ticket-display strong {
     display: block;
     font-size: 3.5rem;
-    margin: 0.75rem 0 1.5rem;
+    margin: 0.75rem 0 1rem;
     color: #38bdf8;
+}
+
+.patient-type-label {
+    display: block;
+    font-size: 1.1rem;
+    color: #22c55e;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.ticket-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.ticket-buttons button {
+    flex: 1;
+    min-width: 140px;
+    max-width: 200px;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+.btn-lama {
+    background: #0891b2;
+}
+
+.btn-lama:hover {
+    background: #0e7490;
+}
+
+.btn-baru {
+    background: #16a34a;
+}
+
+.btn-baru:hover {
+    background: #15803d;
 }
 
 .ticket-info {

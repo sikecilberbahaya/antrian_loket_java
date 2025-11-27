@@ -1,6 +1,7 @@
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\service\TicketAuditService.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\dto\TicketPrintSettingsResponse.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\service\TicketSettingsService.java
+C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\model\PatientType.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\config\TicketPrintProperties.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\model\QueueStatus.java
 C:\xampp\htdocs\panggilan\src\main\java\com\panggilan\loket\dto\CreateCounterRequest.java

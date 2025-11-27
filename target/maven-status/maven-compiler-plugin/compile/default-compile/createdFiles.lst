@@ -1,4 +1,5 @@
 com\panggilan\loket\dto\CreateCounterRequest.class
+com\panggilan\loket\model\PatientType.class
 com\panggilan\loket\config\TicketPrintProperties.class
 com\panggilan\loket\config\CounterProperties.class
 com\panggilan\loket\service\TicketAuditService$1.class

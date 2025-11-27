@@ -231,14 +231,25 @@ public final class CounterCallerApp {
         }
         JsonNode active = counterNode.path("activeTickets");
         if (active.isArray() && active.size() > 0) {
-            StringBuilder builder = new StringBuilder(active.get(0).path("number").asText("-"));
+            JsonNode first = active.get(0);
+            String firstNumber = first.path("number").asText("-");
+            String firstType = formatPatientType(first.path("patientType").asText());
+            StringBuilder builder = new StringBuilder(firstNumber);
+            if (!firstType.isEmpty()) {
+                builder.append(" (").append(firstType).append(")");
+            }
             if (active.size() > 1) {
                 builder.append(" | ");
                 for (int i = 1; i < active.size(); i++) {
                     if (i > 1) {
                         builder.append(", ");
                     }
-                    builder.append(active.get(i).path("number").asText("-"));
+                    JsonNode node = active.get(i);
+                    builder.append(node.path("number").asText("-"));
+                    String type = formatPatientType(node.path("patientType").asText());
+                    if (!type.isEmpty()) {
+                        builder.append(" (").append(type).append(")");
+                    }
                 }
             }
             currentTicketLabel.setText("Nomor Saat Ini: " + builder);
@@ -246,6 +257,19 @@ public final class CounterCallerApp {
         }
         String number = counterNode.path("currentTicket").path("number").asText("-");
         currentTicketLabel.setText("Nomor Saat Ini: " + number);
+    }
+
+    private String formatPatientType(String patientType) {
+        if (patientType == null || patientType.isBlank()) {
+            return "";
+        }
+        if ("BARU".equalsIgnoreCase(patientType)) {
+            return "Baru";
+        }
+        if ("LAMA".equalsIgnoreCase(patientType)) {
+            return "Lama";
+        }
+        return patientType;
     }
 
     private void updateActiveSelector(JsonNode counterNode) {
@@ -258,8 +282,10 @@ public final class CounterCallerApp {
             for (JsonNode node : active) {
                 String id = node.path("id").asText();
                 String number = node.path("number").asText("-");
+                String patientType = formatPatientType(node.path("patientType").asText());
+                String label = patientType.isEmpty() ? number : number + " (" + patientType + ")";
                 if (id != null && !id.isBlank()) {
-                    activeTicketsModel.addElement(new TicketOption(id, number));
+                    activeTicketsModel.addElement(new TicketOption(id, label));
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.panggilan.loket.service;
 
 import com.panggilan.loket.config.CounterProperties;
 import com.panggilan.loket.model.CounterSnapshot;
+import com.panggilan.loket.model.PatientType;
 import com.panggilan.loket.model.QueueStatus;
 import com.panggilan.loket.model.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,7 @@ public class QueueService {
             registerCounter("B", "Loket B");
             registerCounter("C", "Loket C");
         }
+        reloadTicketSequenceFromHistory();
     }
 
     public List<CounterSnapshot> getSnapshot() {
@@ -91,12 +93,17 @@ public class QueueService {
     }
 
     public synchronized Ticket issueTicket() {
+        return issueTicket(PatientType.LAMA);
+    }
+
+    public synchronized Ticket issueTicket(PatientType patientType) {
         ensureDailyResetIfNeeded();
         String firstCounterId = firstCounterId();
         Assert.state(firstCounterId != null, "Tidak ada loket terdaftar");
+        PatientType type = patientType == null ? PatientType.LAMA : patientType;
         int nextSequence = ticketSequence.incrementAndGet();
-        String ticketNumber = String.format("Q-%03d", nextSequence);
-        Ticket ticket = Ticket.create(ticketNumber);
+        String ticketNumber = String.format("%s-%03d", type.getPrefix(), nextSequence);
+        Ticket ticket = Ticket.create(ticketNumber, type);
         waitingByCounter.get(firstCounterId).addLast(ticket);
         auditService.recordIssued(ticket);
         try {
@@ -118,7 +125,35 @@ public class QueueService {
         if (queue == null) {
             return Optional.empty();
         }
-        Ticket ticket = queue.pollFirst();
+        // Loket A hanya bisa memanggil Pasien Baru
+        boolean isLoketA = "A".equalsIgnoreCase(counterId);
+        Ticket ticket = null;
+        if (isLoketA) {
+            // Cari tiket Pasien Baru di antrian
+            Iterator<Ticket> iterator = queue.iterator();
+            while (iterator.hasNext()) {
+                Ticket candidate = iterator.next();
+                if (candidate.getPatientType() == PatientType.BARU) {
+                    ticket = candidate;
+                    iterator.remove();
+                    break;
+                }
+            }
+        } else {
+            // Loket B, C dst: cek queue sendiri dulu
+            ticket = queue.pollFirst();
+            // Jika queue sendiri kosong, cek queue Loket A untuk Pasien Lama
+            if (ticket == null) {
+                String firstCounterId = firstCounterId();
+                if (firstCounterId != null && !counterId.equalsIgnoreCase(firstCounterId)) {
+                    Deque<Ticket> firstQueue = waitingByCounter.get(firstCounterId);
+                    if (firstQueue != null) {
+                        // Ambil tiket pertama (bisa Lama atau Baru)
+                        ticket = firstQueue.pollFirst();
+                    }
+                }
+            }
+        }
         if (ticket == null) {
             return Optional.empty();
         }
@@ -215,6 +250,12 @@ public class QueueService {
         return ticketSequence.get() + 1;
     }
 
+    public int previewNextTicketNumber(PatientType patientType) {
+        ensureDailyResetIfNeeded();
+        // Semua tipe pasien menggunakan sequence yang sama
+        return ticketSequence.get() + 1;
+    }
+
     public QueueStatus getQueueStatus() {
         ensureDailyResetIfNeeded();
         return new QueueStatus(getWaitingQueue(), previewNextTicketNumber());
@@ -230,11 +271,7 @@ public class QueueService {
                 return;
             }
             ticketSequence.set(0);
-            waitingByCounter.values().forEach(Deque::clear);
-            counters.values().forEach(state -> {
-                state.clearActive();
-            });
-            lastResetDate = today;
+            resetTodayQueueState(today);
         }
     }
 
@@ -275,6 +312,23 @@ public class QueueService {
             return null;
         }
         return counterOrder.get(nextIndex);
+    }
+
+    private void reloadTicketSequenceFromHistory() {
+        int lastSequence = auditService.loadLastSequenceForDate(LocalDate.now(clock));
+        ticketSequence.set(Math.max(lastSequence, 0));
+    }
+
+    public synchronized void manualReset() {
+        LocalDate today = LocalDate.now(clock);
+        resetTodayQueueState(today);
+    }
+
+    private void resetTodayQueueState(LocalDate currentDate) {
+        waitingByCounter.values().forEach(Deque::clear);
+        counters.values().forEach(CounterState::clearActive);
+        lastResetDate = currentDate;
+        reloadTicketSequenceFromHistory();
     }
 
     private static final class CounterState {

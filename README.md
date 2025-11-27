@@ -8,6 +8,7 @@ Aplikasi antrean loket berbasis Java Spring Boot dengan antarmuka web dan dukung
 - Tiket diterbitkan satu kali dan bergerak berantai antar loket sesuai urutan (mis. Loket A → B → C).
 - Panggilan antrean berikutnya dan panggilan ulang dengan suara otomatis.
 - Penomoran antrean otomatis direset setiap pukul 00.00 setiap hari.
+- Nomor antrean berlanjut ketika aplikasi dinyalakan ulang pada hari yang sama.
 - Tampilan web responsif untuk memonitor nomor berjalan dan antrean tersisa.
 - Cetak tiket otomatis berisi nama instansi, nomor antrean, dan alamat pada setiap penerbitan nomor.
 - Tanggal penerbitan tercetak di bagian bawah tiket untuk tanda terima harian.
@@ -98,17 +99,17 @@ Anda juga dapat memperbarui nama instansi dan alamat secara cepat melalui `setti
 
 ## Struktur API
 
-| Method | Endpoint                              | Deskripsi                        |
-| ------ | ------------------------------------- | -------------------------------- |
-| GET    | `/api/counters`                       | Daftar loket beserta statusnya.  |
-| POST   | `/api/counters`                       | Tambah loket baru.               |
-| POST   | `/api/tickets`                        | Terbitkan nomor antrean global.  |
-| POST   | `/api/queue/call-next`                | Panggil nomor berikutnya di loket pertama. |
-| POST   | `/api/counters/{id}/call-next`        | Panggil nomor siap untuk loket tertentu. |
-| POST   | `/api/counters/{id}/recall`           | Panggil ulang nomor aktif tertentu (`ticketId` opsional). |
-| POST   | `/api/counters/{id}/complete`         | Selesaikan layanan aktif tertentu (`ticketId` opsional). |
+| Method | Endpoint                              | Deskripsi                                                             |
+| ------ | ------------------------------------- | --------------------------------------------------------------------- |
+| GET    | `/api/counters`                       | Daftar loket beserta statusnya.                                       |
+| POST   | `/api/counters`                       | Tambah loket baru.                                                    |
+| POST   | `/api/tickets`                        | Terbitkan nomor antrean global.                                       |
+| POST   | `/api/queue/call-next`                | Panggil nomor berikutnya di loket pertama.                            |
+| POST   | `/api/counters/{id}/call-next`        | Panggil nomor siap untuk loket tertentu.                              |
+| POST   | `/api/counters/{id}/recall`           | Panggil ulang nomor aktif tertentu (`ticketId` opsional).             |
+| POST   | `/api/counters/{id}/complete`         | Selesaikan layanan aktif tertentu (`ticketId` opsional).              |
 | POST   | `/api/counters/{id}/stop`             | Hentikan nomor aktif tertentu tanpa meneruskan (`ticketId` opsional). |
-| GET    | `/api/queue/status`                   | Status antrean loket pertama.    |
+| GET    | `/api/queue/status`                   | Status antrean loket pertama.                                         |
 
 ## Testing
 
